@@ -1,5 +1,6 @@
 package tk.apfelkuchenwege
 
+import com.sendgrid.SendGrid
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.application.*
@@ -11,13 +12,16 @@ import io.ktor.server.response.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.*
+import tk.apfelkuchenwege.data.banking.AccountManager
 import tk.apfelkuchenwege.handlers.MainAPIHandler
 import tk.apfelkuchenwege.data.banking.BankAccountManager
 import tk.apfelkuchenwege.handlers.configureRouting
 import java.sql.*
 
 private val manager = BankAccountManager()
-val api = MainAPIHandler(manager)
+private val accountManager = AccountManager()
+public val sg = SendGrid(System.getenv("SENDGRID_API_KEY"))
+val api = MainAPIHandler(manager, accountManager)
 fun main() {
 	embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
 		.start(wait = true)

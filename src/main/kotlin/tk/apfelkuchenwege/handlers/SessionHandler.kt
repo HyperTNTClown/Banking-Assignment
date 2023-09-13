@@ -1,9 +1,12 @@
 package tk.apfelkuchenwege.handlers
 
+import io.ktor.server.application.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
 import io.ktor.util.date.*
+import tk.apfelkuchenwege.TimedToken
 import tk.apfelkuchenwege.base64
+import tk.apfelkuchenwege.data.banking.Account
 import tk.apfelkuchenwege.data.banking.BankAccount
 import tk.apfelkuchenwege.sha256
 
@@ -15,11 +18,12 @@ class SessionHandler {
 	 * + unique session identifier. Hashed and trimmed,
 	 * Session Token - randomly generated, every request>
 	 */
-	private val currentSessionTokens: HashMap<String, Session> = HashMap()
+	private val currentSessionTokens: HashMap<String, TimedToken> = HashMap()
 
-	public fun addSession(account: BankAccount) {
-		val id = (account.log + generateSessionId()).sha256().base64()
-		currentSessionTokens[id] = Session(id)
+	public fun addSession(account: Account) : String {
+		val id = (account.email.encodeBase64().replace("=", "") + generateSessionId()).sha256().base64()
+		currentSessionTokens[id] = TimedToken(id)
+		return currentSessionTokens[id]!!.token
 	}
 
 	public fun validateSession(id: String, token: String) : Boolean {
@@ -29,20 +33,14 @@ class SessionHandler {
 		return true
 	}
 
-
-}
-
-class Session (
-	private val id: String
-) {
-	private val timestamp = getTimeMillis()
-
-	val token = generateNonce().sha256().base64()
-
-	private companion object val MAX_DELTA = 300.000
-
-	public fun valid(): Boolean {
-		return getTimeMillis()-timestamp < MAX_DELTA
+	fun renewSession(call: ApplicationCall) {
+		val session = currentSessionTokens[call.parameters["session"]]
+		if (session != null) {
+			if (validateSession(session.id, session.token)) {
+				currentSessionTokens[session.id]!!.renew()
+			}
+		}
 	}
+
 
 }

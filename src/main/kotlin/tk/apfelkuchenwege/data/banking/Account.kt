@@ -1,12 +1,24 @@
 package tk.apfelkuchenwege.data.banking
 
 class Account(
-	private val email: String,
+	val email: String,
 	private val password: String,
-	private val firstName: String,
-	private val lastName: String
+	var firstName: String,
+	var lastName: String
 ) {
+
 	private val BankAccounts = ArrayList<BankAccount>()
+
+	var isVerified = false
+
+	fun verify() {
+		isVerified = true
+	}
+
+	fun login(password: String) : Boolean {
+		return this.password == password
+	}
+
 
 
 }
