@@ -14,10 +14,14 @@ class TimedToken (
 		.replace("/", "")
 		.replace("=", "")
 
-	private companion object val MAX_DELTA = 300.000
+	private companion object val MAX_DELTA = 300000
 
 	public fun valid(): Boolean {
-		return getTimeMillis() -timestamp < MAX_DELTA
+		return (getTimeMillis() - timestamp) < MAX_DELTA
+	}
+
+	public fun renew(): TimedToken {
+		return TimedToken(id)
 	}
 
 }

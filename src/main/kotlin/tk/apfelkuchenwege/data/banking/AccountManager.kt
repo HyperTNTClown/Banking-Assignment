@@ -12,11 +12,10 @@ class AccountManager {
 		return true
 	}
 
-	fun addAccount(account: Account) {
-		while (!isEmailUnique(account.email)) {
-			//account.resetEmail()
-		}
+	fun addAccount(account: Account) : Boolean {
+		if (!isEmailUnique(account.email)) return false
 		accounts.put(account.email, account)
+		return true
 	}
 
 	fun removeAccount(email: String) {

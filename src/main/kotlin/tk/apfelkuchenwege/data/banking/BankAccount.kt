@@ -1,5 +1,6 @@
 package tk.apfelkuchenwege.data.banking
 
+import com.google.gson.JsonObject
 import java.lang.Math.pow
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -10,32 +11,16 @@ import kotlin.math.pow
 
 class BankAccount(
 	var acctNum: Int,
+	var name: String,
 	private var balance: Double,
-	private var fName: String?,
-	private var lName: String?,
-	pswd: String,
-	log: String
+	val account: Account,
 ) {
-    private var pswd: String
-    var log: String
-        private set
+
+	val logger = BankAccountLogger(this)
 
     @JvmOverloads
-    constructor(fName: String? = null, lName: String? = null) : this(0, 0.0, fName, lName, "", "") {
+    constructor(account: Account) : this(0, "Bank Account", 0.0, account) {
         acctNum = genAcctNum(9)
-        pswd = hashPswd(genPassword(MAX_PASSWORD_LENGTH))
-    }
-
-    fun clearLog(pswd: String): Boolean {
-        if (!checkPswd(pswd)) {
-            return false
-        }
-        log = ""
-        return true
-    }
-
-    private fun clearLog() {
-        log = ""
     }
 
     private fun genAcctNum(length: Int): Int {
@@ -48,74 +33,48 @@ class BankAccount(
 
     fun deposit(amount: Double): Boolean {
         if (amount < 0) {
-            log += genTimestamp() + " Deposit Failed [$" + amount + "]\n"
             return false
         }
         balance += amount
-        log += genTimestamp() + " Deposit Successful [$" + amount + "]\n"
+        logger.deposit(amount)
         return true
     }
 
     fun withdraw(amount: Double): Boolean {
         if (amount < 0 || amount > balance) {
-            log += genTimestamp() + " Withdrawal Failed [$" + amount + "]\n"
             return false
         }
         balance -= amount
-        log += genTimestamp() + " Withdrawal Successful [$" + amount + "]\n"
+        logger.withdraw(amount)
         return true
     }
 
     fun transferTo(amount: Double, recipient: BankAccount): Boolean {
         if (amount < 0 || amount > balance) {
-            log += genTimestamp() + " Transfer Failed [$" + amount + " to  account" + recipient.acctNum + "]\n"
             return false
         }
         if (!recipient.receiveFrom(amount, this)) {
-            log += genTimestamp() + " Transfer Failed [$" + amount + " to  account" + recipient.acctNum + "]\n"
             return false
         }
         balance -= amount
-        log += genTimestamp() + " Transfer [$" + amount + " to  account" + recipient.acctNum + "]\n"
+        logger.transfer(amount, recipient)
         return true
     }
 
-    fun receiveFrom(amount: Double, sender: BankAccount): Boolean {
+    private fun receiveFrom(amount: Double, sender: BankAccount): Boolean {
         if (amount < 0) {
             return false
         }
         balance += amount
-        log += genTimestamp() + " Transfer [$" + amount + " received from account " + sender.acctNum + "]\n"
-        return true
-    }
-
-    fun checkPswd(pswd: String): Boolean {
-        return this.pswd == hashPswd(pswd)
-    }
-
-    fun resetPswd(crrntPswd: String, nwPswd: String): Boolean {
-        val hashedCrrntPswd = hashPswd(crrntPswd)
-        if (hashedCrrntPswd != pswd || nwPswd.length > MAX_PASSWORD_LENGTH) {
-            log += genTimestamp() + " Reset Password Failed!\n"
-            return false
-        }
-        pswd = hashPswd(nwPswd)
-        log += genTimestamp() + " Password Successfully Changed!\n"
+        logger.receive(amount, sender)
         return true
     }
 
     fun display() {
         println("Acct Num: $acctNum")
+		println("Acct Name: $name")
         println("Balance: $balance")
-        println("First: $fName")
-        println("Last: $lName")
-        println("Password (Hashed): $pswd")
-        println("Log: \n $log")
-    }
-
-    init {
-        this.pswd = hashPswd(pswd.trim { it <= ' ' })
-        this.log = log
+        println("Log: \n ${logger.toString()}")
     }
 
     private fun genPassword(length: Int): String {
@@ -124,32 +83,7 @@ class BankAccount(
             pswdBuilder.append(strArray[(Math.random() * strArray.size).toInt()])
         }
         val pswd = pswdBuilder.toString()
-        log += """${genTimestamp()} Generated password: $pswd
- This is your only chance to see it!
-""" // can't go completely without showing it
         return pswd
-    }
-
-    // Will probably be done on the frontend when finished so the password isn't leaving the user in plaintext
-    // but ain't no way I'm storing any password in plaintext
-    private fun hashPswd(pswd: String): String {
-        // SHA-256
-        val digest: MessageDigest?
-        digest = try {
-            MessageDigest.getInstance("SHA-256")
-        } catch (e: NoSuchAlgorithmException) {
-            throw RuntimeException(e)
-        }
-        if (digest == null) {
-            throw RuntimeException("MessageDigest.getInstance(\"SHA-256\") returned null")
-        }
-        val hash = digest.digest(pswd.toByteArray())
-        // Base64 encoding
-        return Base64.getEncoder().encodeToString(hash)
-    }
-
-    private fun genTimestamp(): String {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd.HH.mm.ss"))
     }
 
     fun resetAcctNum() {
@@ -157,7 +91,7 @@ class BankAccount(
     }
 
     companion object {
-        private const val MAX_PASSWORD_LENGTH = 5
+        private const val MAX_PASSWORD_LENGTH = 20
         var strArray = arrayOf(
             "a", "b", "c", "d", "e", "f", "g", "h", "i",
             "j", "k", "l", "m", "n", "o", "p", "q", "r",
@@ -168,4 +102,13 @@ class BankAccount(
             "3", "4", "5", "6", "7", "8", "9", "0"
         )
     }
+
+	fun toJson(): JsonObject {
+		return JsonObject().apply {
+			addProperty("acctNum", acctNum)
+			addProperty("name", name)
+			addProperty("balance", balance)
+			add("log", logger.toJson())
+		}
+	}
 }
