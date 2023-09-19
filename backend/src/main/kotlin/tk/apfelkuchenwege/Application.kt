@@ -30,7 +30,7 @@ fun main() {
 
 fun Application.module() {
 	configureRouting()
-	val dbConnection: Connection = connectToPostgres(embedded = true)
+	//val dbConnection: Connection = connectToPostgres(embedded = true)
 }
 
 

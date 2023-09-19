@@ -1,8 +1,5 @@
-import App from './app.tsx'
 import './index.css'
 import './App.css'
-import React from "react";
-import ReactDOM from "react-dom";
 import Home from "./pages/home.tsx";
 import Banking from "./pages/banking.tsx";
 import Register from "./pages/register.tsx";

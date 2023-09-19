@@ -26,7 +26,9 @@ export default function Banking() {
     return (
         <>
             <h1> Banking </h1>
-            <h2> {accountData.bankAccounts[0].balance} </h2>
+            <h2> {
+				// @ts-ignore
+				accountData.bankAccounts[0].balance} </h2>
         </>
     )
 }

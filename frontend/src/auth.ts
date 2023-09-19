@@ -14,13 +14,14 @@ export default function useAuth() {
     }
 
     const hashPassword = async (password: string) => {
-        let hashedPassword = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password))
-        let base64Password = btoa(String.fromCharCode.apply(null, new Uint8Array(hashedPassword)));
+        const hashedPassword = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password))
+		// @ts-ignore
+        const base64Password = btoa(String.fromCharCode.apply(null, new Uint8Array(hashedPassword)));
         return base64Password;
     }
 
     const login = async (email: string, password: string) => {
-        let res = await fetch('/api/v1/auth/login', {
+        const res = await fetch('/api/v1/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -28,8 +29,8 @@ export default function useAuth() {
             body: JSON.stringify({email: email, password: await hashPassword(password)})
         })
 
-        let text = await res.text();
-        let json = JSON.parse(text);
+        const text = await res.text();
+        const json = JSON.parse(text);
         console.log(json)
         if (json.status === 'success') {
             console.log('success')
@@ -51,6 +52,7 @@ export default function useAuth() {
         console.log(json)
     }
 
+	// @ts-ignore
     const verify = async (token: string) => {
         let res = await fetch(`/api/v1/verify?token=${token}`, {
             method: 'GET',
@@ -78,6 +80,7 @@ export default function useAuth() {
         return json.valid;
     }
 
+	// @ts-ignore
     const loggedIn = async () => {
         if (token === undefined || token === '' || token === null) {
             return false;
@@ -85,6 +88,7 @@ export default function useAuth() {
         return await valid();
     }
 
+	// @ts-ignore
     const logout = () => {
         sessionStorage.removeItem('token');
         setToken('');
@@ -94,6 +98,7 @@ export default function useAuth() {
         setToken: saveToken,
         token,
         login,
-        register
+        register,
+		verify
     }
 }
