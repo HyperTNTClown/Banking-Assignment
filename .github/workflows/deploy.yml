@@ -24,12 +24,11 @@ jobs:
       with:
         arguments: build
         build-root-directory: ./backend/
-    - name: SFTP Upload
-      uses: Dylan700/sftp-upload-action@v1.2.0
+    - name: SFTP
+      uses: wangyucode/sftp-upload-action@v2.0.2
       with:
-        server: ${{secrets.SSH_HOST}} 
+        host: ${{secrets.SSH_HOST}} 
         username: ${{secrets.SSH_USERNAME}}
-        key: ${{secrets.SSH_KEY}}
-        uploads: |
-          ./backend/build/libs => backend/
-        delete: true
+        privateKey: ${{secrets.SSH_KEY}}
+        localDir: ./backend/build/libs
+        remoteDir: ./backend/
