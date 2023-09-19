@@ -23,7 +23,7 @@ jobs:
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
         arguments: build
-        build-root-directory: /backend/
+        build-root-directory: ./backend/
     - name: SFTP Push
       uses: datanomi/SFTP-Push@v.1.2.2.1h
       with:
