@@ -24,14 +24,13 @@ jobs:
       with:
         arguments: build
         build-root-directory: ./backend/
-    - run: ls
     - name: SFTP
       uses: swillner/sftp-sync-action@v1.0
       with:
         server: ${{secrets.SSH_HOST}} 
         user: ${{secrets.SSH_USERNAME}}
         user_private_key: ${{secrets.SSH_KEY}}
-        local: ./backend/build/libs/*
+        local: ./backend/build/libs/
         remote: ./backend/
 
   frontend:
@@ -39,7 +38,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - run: ls
     - uses: actions/checkout@v3
     - name: Use Node.js 18
       uses: actions/setup-node@v3
@@ -51,12 +49,11 @@ jobs:
       working-directory: frontend
     - run: npm run build --if-present
       working-directory: frontend
-    - run: ls
     - name: SFTP
       uses: swillner/sftp-sync-action@v1.0
       with:
         server: ${{secrets.SSH_HOST}} 
         user: ${{secrets.SSH_USERNAME}}
         user_private_key: ${{secrets.SSH_KEY}}
-        local: ./frontend/dist/*
+        local: ./frontend/dist/
         remote: ./frontend/
