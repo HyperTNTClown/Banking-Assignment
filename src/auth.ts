@@ -25,7 +25,7 @@ export default function useAuth() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({email: email, password: hashPassword(password)})
+            body: JSON.stringify({email: email, password: await hashPassword(password)})
         })
 
         let text = await res.text();
