@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  backend:
 
     runs-on: ubuntu-latest
 
@@ -24,12 +24,12 @@ jobs:
       with:
         arguments: build
         build-root-directory: ./backend/
-    - name: SFTP Push
-      uses: datanomi/SFTP-Push@v.1.2.2.1h
+    - name: SFTP Upload
+      uses: Dylan700/sftp-upload-action@v1.2.0
       with:
-        username: ${{ secrets.SSH_USERNAME }}
-        server: ${{ secrets.SSH_HOST }}
-        port: 22
-        ssh_private_key: ${{ secrets.SSH_KEY }} 
-        local_path: ./backend/build/libs/Banking-ktor-all.jar
-        remote_path: ~/backend/
+        server: ${{secrets.SSH_HOST}} 
+        username: ${{secrets.SSH_USERNAME}}
+        key: ${{secrets.SSH_KEY}}
+        uploads: |
+          ./backend/build/libs => backend/
+        delete: true
