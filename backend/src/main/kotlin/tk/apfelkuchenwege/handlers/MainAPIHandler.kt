@@ -21,18 +21,6 @@ class MainAPIHandler(
 	private val accountManager: AccountManager
 ) {
 
-	init {
-		var account = Account(
-			"marvin@apflkchn.tk",
-			"9228".sha256().base64(),
-			"Marvin",
-			"Fastenau"
-		)
-
-		accountManager.addAccount(account)
-		account.verify()
-	}
-
 	val email = EMailAuthHandler()
 
 	val sessionHandler = SessionHandler(accountManager)
