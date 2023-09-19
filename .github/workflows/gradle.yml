@@ -31,5 +31,5 @@ jobs:
         server: ${{ secrets.SSH_HOST }}
         port: 22
         ssh_private_key: ${{ secrets.SSH_KEY }} 
-        local_path: /backend/build/libs/Banking-ktor-all.jar
+        local_path: ./backend/build/libs/Banking-ktor-all.jar
         remote_path: ~/backend/
