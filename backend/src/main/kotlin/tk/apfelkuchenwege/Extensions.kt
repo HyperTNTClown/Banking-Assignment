@@ -1,8 +1,10 @@
 package tk.apfelkuchenwege
 
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import java.security.MessageDigest
 import kotlin.io.encoding.Base64
@@ -23,4 +25,9 @@ suspend fun ApplicationCall.respondJson(response: JsonObject, statusCode: HttpSt
 
 suspend fun ApplicationCall.respondJson(response: JsonObject) {
 	this.respondJson(response, HttpStatusCode.OK)
+}
+
+suspend fun ApplicationCall.receiveJson(): JsonObject? {
+	val text = this.receive<String>()
+	return JsonParser.parseString(text).asJsonObject
 }

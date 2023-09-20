@@ -25,6 +25,7 @@ class MainAPIHandler(
 
 	val sessionHandler = SessionHandler(accountManager)
 	val accountAPIHandler = AccountAPIHandler(sessionHandler)
+	val bankingAPIHandler = BankingAPIHandler()
 
 	suspend fun login(call: ApplicationCall) {
 		var data = call.receive<String>()
@@ -123,6 +124,9 @@ fun Application.configureRouting() {
 			route("banking") {
 				get("accounts") {
 					api.accountAPIHandler.getAccount(call)
+				}
+				post("deposit") {
+					api.bankingAPIHandler.deposit(call)
 				}
 			}
 		}

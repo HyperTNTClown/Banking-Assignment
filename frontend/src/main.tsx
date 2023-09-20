@@ -7,6 +7,7 @@ import Login from "./pages/login.tsx";
 import About from "./pages/about.tsx";
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import {createRoot} from "react-dom/client";
+import Verify from "./pages/verify.tsx";
 
 const router = createBrowserRouter([
     { path: '/', element: <Home /> },
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
     { path: '/login', element: <Login /> },
     { path: '/register', element: <Register /> },
     { path: '/banking', element: <Banking /> },
+	{ path: '/verify', element: <Verify /> }
 ], {
     future: {
         v7_normalizeFormMethod: true,

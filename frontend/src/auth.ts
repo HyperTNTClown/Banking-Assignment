@@ -36,6 +36,10 @@ export default function useAuth() {
             console.log('success')
             saveToken(json.token);
         }
+
+		return {
+			status: json.status
+		}
     }
 
     const register = async (email: string, password: string, firstName: string, lastName: string) => {
@@ -99,6 +103,9 @@ export default function useAuth() {
         token,
         login,
         register,
-		verify
+		verify,
+		valid,
+		loggedIn,
+		logout
     }
 }
