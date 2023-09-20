@@ -1,4 +1,4 @@
-name: Build and Deploy Backend
+name: Build and Deploy the Project
 
 on:
   push:
@@ -32,6 +32,7 @@ jobs:
         user_private_key: ${{secrets.SSH_KEY}}
         local: ./backend/build/libs/
         remote: ./backend/
+        mirror_options: --delete-first
 
   frontend:
 
@@ -57,3 +58,4 @@ jobs:
         user_private_key: ${{secrets.SSH_KEY}}
         local: ./frontend/dist/
         remote: ./frontend/
+        mirror_options: --delete-first
