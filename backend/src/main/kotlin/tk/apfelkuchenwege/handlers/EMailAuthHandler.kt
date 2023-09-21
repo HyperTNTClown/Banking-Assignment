@@ -52,7 +52,6 @@ class EMailAuthHandler {
 		var accountEmail = Email(account.email, "${account.firstName} ${account.lastName}")
 		val token = TimedToken(account.email)
 		tokenMap[token.token] = token
-		println("Please verify your account by clicking this link: https://bank.apflkchn.tk/verify?token=${token.token}")
 		var content = Content("text/plain", "Please verify your account by clicking this link: https://bank.apflkchn.tk/verify?token=${token.token}")
 		tokenMap[token.token] = token
 		sendMail(accountEmail, content)
@@ -63,7 +62,6 @@ class EMailAuthHandler {
 		val token = TimedToken(account.email)
 		pendingAccounts[account.email] = account
 		tokenMap[token.token] = token
-		println("Please reset your password by clicking this link: https://bank.apflkchn.tk/reset?token=${token.token}")
 		var content = Content("text/plain", "Please reset your password by clicking this link: https://bank.apflkchn.tk/reset?token=${token.token}")
 		tokenMap[token.token] = token
 		sendMail(accountEmail, content)

@@ -92,7 +92,7 @@ class MainAPIHandler(
 
 		var response = JsonObject()
 		response.addProperty("status", "success")
-		response.addProperty("message", "Account created. Verification email sent")
+		response.addProperty("message", "Account created\n Verification email sent")
 		call.respondJson(response)
 	}
 
