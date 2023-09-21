@@ -1,5 +1,4 @@
 import './index.css'
-import './App.css'
 import Home from "./pages/home.tsx";
 import Banking from "./pages/banking.tsx";
 import Register from "./pages/register.tsx";
@@ -24,6 +23,6 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   //<React.StrictMode>
-    <RouterProvider router={router} />
+	<RouterProvider router={router} />
   //</React.StrictMode>,
 )

@@ -1,0 +1,76 @@
+.registerForm {
+    width: 50vw;
+	padding: 40px;
+	background: #292929;
+	border-radius: 10px;
+	box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), 0 0 10px #646cff, 0 0 20px #646cff, 0 0 40px #646cff, 0 0 80px #646cff;
+}
+
+.input {
+	width: 100%;
+	padding: 10px 20px;
+	box-sizing: border-box;
+	background: #292929;
+	border: 1px solid #646cff;
+	border-radius: 5px;
+	outline: none;
+	color: #fff;
+	font-size: 16px;
+	margin: 10px 0;
+	caret-color: #646cff;
+}
+
+.input:focus {
+	border: 1px outset #535bf2;
+}
+
+.label {
+	color: #646cff;
+	font-size: 18px;
+	font-weight: 500;
+}
+
+.label:hover {
+	color: #535bf2;
+}
+
+.label::selection {
+	background: transparent;
+}
+
+
+.registerButton {
+	width: 100%;
+	padding: 10px 20px;
+	box-sizing: border-box;
+	background: #646cff;
+	border: none;
+	border-radius: 5px;
+	outline: none;
+	color: #fff;
+	font-size: 16px;
+	margin: 10px 0;
+	cursor: pointer;
+	transition: background-color 0.2s ease-in-out, box-shadow 0.1s ease-in-out;
+}
+
+.registerButton:hover, .registerButton:focus {
+	background: #535bf2;
+	box-shadow: 0 0 5px #535bf2, 0 0 10px #535bf2, 0 0 20px #535bf2;
+}
+
+.registerButton:active {
+	background: #646cff;
+}
+
+.loginLink {
+	color: #646cff;
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.loginLink:hover {
+	color: #535bf2;
+	cursor: pointer;
+}

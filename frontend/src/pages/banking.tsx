@@ -28,7 +28,6 @@ export default function Banking() {
     if (!ready) {
         return (
             <>
-                <h1> Banking </h1>
 				<RingLoader></RingLoader>
             </>
         )

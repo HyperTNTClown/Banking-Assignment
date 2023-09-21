@@ -54,6 +54,7 @@ export default function useAuth() {
         let text = await res.text();
         let json = JSON.parse(text);
         console.log(json)
+		return json;
     }
 
 	// @ts-ignore
