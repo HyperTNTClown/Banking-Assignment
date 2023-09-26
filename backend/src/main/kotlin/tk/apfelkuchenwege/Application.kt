@@ -55,9 +55,9 @@ fun createTables() {
 }
 
 fun connectToPostgres(): Database? {
-	val url = System.getenv("postgres.url")
-	val user = System.getenv("postgres.user")
-	val password = System.getenv("postgres.password")
+	val url = System.getenv("PSQL_URL")
+	val user = System.getenv("PSQL_USER")
+	val password = System.getenv("PSQL_PASSWORD")
 
 	return Database.connect(url, driver = "org.postgresql.Driver", user = user, password = password)
 }
