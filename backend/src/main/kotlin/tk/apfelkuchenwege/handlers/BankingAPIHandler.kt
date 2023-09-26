@@ -42,12 +42,15 @@ class BankingAPIHandler {
 		val to = json.get("to").asInt
 
 		api.sessionHandler.getAccountFromSession(token.asString)?.let {
-			var recipient = BankAccount.find { BankAccounts.acctNum eq to }.firstOrNull()
+			var recipient: BankAccount? = null
+			org.jetbrains.exposed.sql.transactions.transaction {
+				recipient = BankAccount.find { BankAccounts.acctNum eq to }.firstOrNull()
+			}
 			if (recipient == null) {
 				it.getBankAccount(acctNumber)?.withdraw(amount)
 				return
 			}
-			it.getBankAccount(acctNumber)?.transferTo(amount, recipient)
+			it.getBankAccount(acctNumber)?.transferTo(amount, recipient!!)
 		}
 	}
 
