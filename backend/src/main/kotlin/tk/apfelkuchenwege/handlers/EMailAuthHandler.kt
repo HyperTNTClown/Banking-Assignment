@@ -9,6 +9,7 @@ import com.sendgrid.helpers.mail.objects.Email
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import org.jetbrains.exposed.sql.transactions.transaction
 import tk.apfelkuchenwege.TimedToken
 import tk.apfelkuchenwege.data.banking.Account
 import tk.apfelkuchenwege.respondJson
@@ -42,7 +43,9 @@ class EMailAuthHandler {
 		var response = JsonObject()
 		response.addProperty("status", "success")
 		response.addProperty("message", "Account verified")
-		account.verify()
+		transaction {
+			account.verify()
+		}
 
 		call.respondJson(response)
 		return

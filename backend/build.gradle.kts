@@ -5,6 +5,7 @@ val logback_version: String by project
 plugins {
     kotlin("jvm") version "1.9.10"
     id("io.ktor.plugin") version "2.3.4"
+	kotlin("plugin.serialization") version "1.9.0"
 }
 
 group = "tk.apfelkuchenwege"
@@ -20,6 +21,8 @@ application {
 repositories {
     mavenCentral()
 }
+
+val exposedVersion: String by project
 
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
@@ -37,4 +40,12 @@ dependencies {
 	implementation("ch.qos.logback:logback-classic:1.4.11")
 	implementation("org.slf4j:slf4j-api:2.0.9")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+	implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-money:$exposedVersion")
 }

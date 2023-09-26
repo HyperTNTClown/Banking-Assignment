@@ -2,30 +2,56 @@ package tk.apfelkuchenwege.data.banking
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import org.jetbrains.exposed.sql.or
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class BankAccountLogger(val bankAccount: BankAccount) {
-	private val log = ArrayList<Transfer>()
-
-	fun log(transfer: Transfer) {
-		log.add(transfer)
-	}
 
 	fun deposit(amount: Double) {
-		log(Transfer(null, bankAccount, amount, System.currentTimeMillis()))
+		transaction {
+			Transfer.new {
+				from = null
+				to = bankAccount.id
+				this.amount = amount
+				timestamp = System.currentTimeMillis()
+			}
+		}
 	}
 
 	fun withdraw(amount: Double) {
-		log(Transfer(bankAccount, null, amount, System.currentTimeMillis()))
+		transaction {
+			Transfer.new {
+				from = bankAccount.id
+				to = null
+				this.amount = amount
+				timestamp = System.currentTimeMillis()
+			}
+		}
 	}
 
 	fun transfer(amount: Double, to: BankAccount) {
-		log(Transfer(bankAccount, to, amount, System.currentTimeMillis()))
+		transaction {
+			Transfer.new {
+				from = bankAccount.id
+				this.to = to.id
+				this.amount = amount
+				timestamp = System.currentTimeMillis()
+			}
+		}
 	}
 
 	fun receive(amount: Double, from: BankAccount) {
-		log(Transfer(from, bankAccount, amount, System.currentTimeMillis()))
+		transaction {
+			Transfer.new {
+				this.from = from.id
+				to = bankAccount.id
+				this.amount = amount
+				timestamp = System.currentTimeMillis()
+			}
+		}
 	}
 
 
@@ -35,8 +61,12 @@ class BankAccountLogger(val bankAccount: BankAccount) {
 
 	fun toJson() : JsonArray {
 		var json = JsonArray()
-		for (transfer in log) {
-			json.add(transfer.toJSON())
+		transaction {
+			Transfers.select {
+				(Transfers.from eq bankAccount.id) or (Transfers.to eq bankAccount.id)
+			}.forEach {
+				json.add(Transfer.wrapRow(it).toJSON())
+			}
 		}
 		return json
 	}
@@ -44,8 +74,12 @@ class BankAccountLogger(val bankAccount: BankAccount) {
 	@Override
 	override fun toString(): String {
 		var str = ""
-		for (transfer in log) {
-			str += transfer.toString() + "\n"
+		transaction {
+			Transfers.select {
+				(Transfers.from eq bankAccount.id) or (Transfers.to eq bankAccount.id)
+			}.forEach {
+				str += Transfer.wrapRow(it).toString() + "\n"
+			}
 		}
 		return str
 	}

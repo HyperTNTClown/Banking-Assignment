@@ -10,6 +10,7 @@ class AccountAPIHandler(private val sessionHandler: SessionHandler) {
 		var token = call.parameters["token"]!!
 		println(token)
 		this.sessionHandler.getAccountFromSession(token)?.let { call.respondJson(it.toJson()) }
-		println(this.sessionHandler.getAccountFromSession(token))
+		println(this.sessionHandler.getAccountFromSession(token)?.getBankAccounts())
+
 	}
 }

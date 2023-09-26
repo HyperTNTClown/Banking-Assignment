@@ -5,11 +5,11 @@ import com.google.gson.JsonParser
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.h2.value.TypeInfo
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.jetbrains.exposed.sql.transactions.transaction
 import tk.apfelkuchenwege.data.banking.BankAccountManager
-import tk.apfelkuchenwege.api
 import tk.apfelkuchenwege.base64
 import tk.apfelkuchenwege.data.banking.Account
 import tk.apfelkuchenwege.data.banking.AccountManager
@@ -73,22 +73,27 @@ class MainAPIHandler(
 
 		println(json)
 
-		var account = Account(
-			json.get("email").asString,
-			json.get("password").asString.sha256().base64(),
-			json.get("firstName").asString,
-			json.get("lastName").asString
-		)
+		var account = null as Account?;
 
-		if (!accountManager.addAccount(account)) {
+		transaction {
+			account = Account.new {
+				email = json.get("email").asString
+				password = json.get("password").asString.sha256().base64()
+				firstName = json.get("firstName").asString
+				lastName = json.get("lastName").asString
+				isVerified = false
+			}
+		}
+
+		if (!accountManager.addAccount(account!!)) {
 			var response = JsonObject()
 			response.addProperty("status", "error")
 			response.addProperty("message", "Email already in use")
 			call.respondJson(response, HttpStatusCode.BadRequest)
 			return
 		}
-		email.pendingAccounts[account.email] = account
-		email.sendVerificationMail(account)
+		email.pendingAccounts[account!!.email] = account!!
+		email.sendVerificationMail(account!!)
 
 		var response = JsonObject()
 		response.addProperty("status", "success")
@@ -98,7 +103,7 @@ class MainAPIHandler(
 
 }
 
-fun Application.configureRouting() {
+fun Application.configureRouting(api: MainAPIHandler) {
 	routing {
 		route("/api/v1") {
 			route("auth") {
@@ -127,6 +132,12 @@ fun Application.configureRouting() {
 				}
 				post("deposit") {
 					api.bankingAPIHandler.deposit(call)
+				}
+				post("withdraw") {
+					api.bankingAPIHandler.withdraw(call)
+				}
+				post("transaction") {
+					api.bankingAPIHandler.transaction(call)
 				}
 			}
 		}

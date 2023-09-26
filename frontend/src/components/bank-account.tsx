@@ -1,3 +1,5 @@
+import styles from '../css/bank-account.module.css'
+
 interface BankAccountProps {
 	bankAccount: BankAccount
 }
@@ -11,9 +13,12 @@ export interface BankAccount {
 
 export default function BankAccountComponent(props: BankAccountProps) {
 	return (
-		<>
-			<h1>{props.bankAccount.acctNum} - {props.bankAccount.name}</h1>
+		<div className={styles.accountCard}>
+			<div>
+				<h1>{props.bankAccount.name}</h1>
+				<span>{props.bankAccount.acctNum}</span>
+			</div>
 			<h2>${props.bankAccount.balance+0.0}</h2>
-		</>
+		</div>
 	)
 }

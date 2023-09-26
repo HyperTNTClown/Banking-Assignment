@@ -1,6 +1,6 @@
 package tk.apfelkuchenwege.data.banking
 
-class BankAccountManager {
+class BankAccountManager() {
     private var bankAccounts: ArrayList<BankAccount>
 
     init {

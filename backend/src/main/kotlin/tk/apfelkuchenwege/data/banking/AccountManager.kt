@@ -1,6 +1,8 @@
 package tk.apfelkuchenwege.data.banking
 
-class AccountManager {
+import org.jetbrains.exposed.sql.transactions.transaction
+
+class AccountManager() {
 	private val accounts: HashMap<String, Account> = HashMap()
 
 	private fun isEmailUnique(email: String): Boolean {
@@ -14,7 +16,7 @@ class AccountManager {
 
 	fun addAccount(account: Account) : Boolean {
 		if (!isEmailUnique(account.email)) return false
-		accounts.put(account.email, account)
+		accounts[account.email] = account
 		return true
 	}
 
@@ -23,11 +25,11 @@ class AccountManager {
 	}
 
 	fun getAccount(email: String): Account? {
-		return if (accounts.containsKey(email)) {
-			accounts[email]
-		} else {
-			null
+		var acc = null as Account?
+		transaction {
+			acc = Account.find { Accounts.email eq email }.firstOrNull()
 		}
+		return acc
 	}
 
 }

@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 export default function useAuth() {
     const getToken = () => {
@@ -98,6 +98,26 @@ export default function useAuth() {
         sessionStorage.removeItem('token');
         setToken('');
     }
+
+	const renew = async () => {
+		let res = await fetch(`/api/v1/auth/renew?token=${token}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+
+		let text = await res.text();
+		let json = JSON.parse(text);
+		console.log(json)
+		saveToken(json.token)
+	}
+
+	useEffect(() => {
+		loggedIn().then((valid) => {
+			renew();
+		})
+	}, []);
 
     return {
         setToken: saveToken,
