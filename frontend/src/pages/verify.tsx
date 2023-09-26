@@ -1,5 +1,6 @@
 
 import useAuth from "../auth.ts";
+import {Navigate} from "react-router-dom";
 
 export default function Verify() {
 
@@ -8,11 +9,11 @@ export default function Verify() {
     const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
 
-    if (!token) return <h1> Verify </h1>;
+    if (!token) return <Navigate to={"/login"} />;
 
 	verify(token);
 
     return (
-        <h1> Verify </h1>
+        <Navigate to={"/login"} />
     )
 }
