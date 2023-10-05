@@ -31,7 +31,7 @@ export default function History() {
 					</div>
 					<div className={styles.cardBody}>
 						<div className={styles.cardText}>
-							{"$ " + parseFloat(obj.amount)+.0}
+							{"$ " + parseFloat(obj.amount)}
 						</div>
 					</div>
 				</div>
