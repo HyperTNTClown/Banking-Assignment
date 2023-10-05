@@ -35,6 +35,7 @@ class EMailAuthHandler {
 	suspend fun handleVerification(call: ApplicationCall) {
 		var token = call.parameters["token"]
 		if (!checkToken(call, token)) return
+		println(pendingAccounts.keys)
 		var account = pendingAccounts[tokenMap[token]!!.id]!!
 
 		pendingAccounts.remove(account.email)
@@ -52,6 +53,7 @@ class EMailAuthHandler {
 	}
 
 	fun sendVerificationMail(account: Account) {
+		pendingAccounts[account.email] = account
 		var accountEmail = Email(account.email, "${account.firstName} ${account.lastName}")
 		val token = TimedToken(account.email)
 		tokenMap[token.token] = token

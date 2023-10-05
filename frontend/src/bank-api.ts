@@ -1,75 +1,58 @@
-export async function getAccount() {
-    let token = sessionStorage.getItem('token');
-    let res = await fetch(`/api/v1/banking/accounts?token=${token}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
+import {sendGetRequest, sendPostRequest} from "./api.ts";
 
-    let text = await res.text();
-    let json = JSON.parse(text);
-    console.log(json)
-    return json;
+export async function getAccount() {
+	let res = await sendGetRequest('/api/v1/banking/accounts')
+
+	console.log(res)
+	return res;
 }
 
 export async function transaction(amount: number, from: number, to: number) {
-	let token = sessionStorage.getItem('token');
-	let res = await fetch(`/api/v1/banking/transaction`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			token: token,
-			amount: amount,
-			acct: from,
-			to: to
-		})
+	let res = await sendPostRequest('/api/v1/banking/transaction', {
+		amount: amount,
+		acct: from,
+		to: to
 	})
 
-	let text = await res.text();
-	let json = JSON.parse(text);
-	console.log(json)
-	return json;
+	console.log(res)
+	return res;
 }
 
 export async function deposit(amount: number, to: number) {
-	let token = sessionStorage.getItem('token');
-	let res = await fetch(`/api/v1/banking/deposit`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			token: token,
-			amount: amount,
-			acct: to
-		})
+	let res = await sendPostRequest('/api/v1/banking/deposit', {
+		amount: amount,
+		acct: to
 	})
 
-	let text = await res.text();
-	let json = JSON.parse(text);
-	console.log(json)
-	return json;
+	console.log(res)
+	return res;
 }
 
 export async function withdraw(amount: number, from: number) {
-	let token = sessionStorage.getItem('token');
-	let res = await fetch(`/api/v1/banking/withdraw`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			token: token,
-			amount: amount,
-			acct: from
-		})
+	let res = await sendPostRequest('/api/v1/banking/withdraw', {
+		amount: amount,
+		acct: from
 	})
 
-	let text = await res.text();
-	let json = JSON.parse(text);
-	console.log(json)
-	return json;
+	console.log(res)
+	return res;
+}
+
+export async function getHistory(accounts: number[]) {
+	let res = await sendPostRequest('/api/v1/banking/history', {
+		accts: accounts
+	})
+
+	console.log(res)
+	return res;
+}
+
+export async function changeAccountName(name: String, acct: number) {
+	let res = await sendPostRequest('/api/v1/banking/change-name', {
+		name: name,
+		acct: acct
+	})
+
+	console.log(res)
+	return res;
 }

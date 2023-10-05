@@ -31,7 +31,7 @@ body {
 	place-items: center;
 	min-width: 320px;
 	min-height: 100vh;
-	overflow: hidden;
+	overflow: hidden !important;
 }
 
 @media (prefers-color-scheme: light) {
@@ -65,4 +65,24 @@ body {
 .svg:hover {
 	fill: #747bff;
 	filter: blur(0.5px);
+}
+
+#loading {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#amount {
+	background-color: #2d2d2d;
+	border: #626262 1px solid;
+	color: #A9A9A9;
+}
+
+#amount::placeholder {
+	color: rgba(239,239,239,0.5);
+}
+
+#transfer {
 }

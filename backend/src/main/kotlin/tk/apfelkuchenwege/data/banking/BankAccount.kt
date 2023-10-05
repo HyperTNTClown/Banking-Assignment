@@ -6,13 +6,6 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.transactions.transaction
-import tk.apfelkuchenwege.data.banking.BankAccount.Companion.genAcctNum
-import java.lang.Math.pow
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.math.pow
 
 object BankAccounts : IntIdTable() {
@@ -22,7 +15,7 @@ object BankAccounts : IntIdTable() {
 	val account = reference("account", Accounts)
 }
 
-class BankAccount(
+open class BankAccount(
 	id: EntityID<Int>
 ) : IntEntity(id) {
 
@@ -46,7 +39,7 @@ class BankAccount(
 
 	val logger = BankAccountLogger(this)
 
-    fun deposit(amount: Double): Boolean {
+    open fun deposit(amount: Double): Boolean {
         if (amount < 0) {
             return false
         }
@@ -57,7 +50,7 @@ class BankAccount(
         return true
     }
 
-    fun withdraw(amount: Double): Boolean {
+    open fun withdraw(amount: Double): Boolean {
         if (amount < 0 || amount > balance) {
             return false
         }
@@ -68,7 +61,9 @@ class BankAccount(
         return true
     }
 
-    fun transferTo(amount: Double, recipient: BankAccount): Boolean {
+    open fun transferTo(amount: Double, recipient: BankAccount): Boolean {
+		println(amount)
+		println(balance)
         if (amount < 0 || amount > balance) {
             return false
         }
@@ -82,7 +77,7 @@ class BankAccount(
         return true
     }
 
-    private fun receiveFrom(amount: Double, sender: BankAccount): Boolean {
+    protected open fun receiveFrom(amount: Double, sender: BankAccount): Boolean {
         if (amount < 0) {
             return false
         }
@@ -105,12 +100,52 @@ class BankAccount(
         acctNum = genAcctNum(9)
     }
 
-	fun toJson(): JsonObject {
+	open fun toJson(): JsonObject {
 		return JsonObject().apply {
 			addProperty("acctNum", acctNum)
+			addProperty("type", "internal")
 			addProperty("name", name)
 			addProperty("balance", balance)
 			add("log", logger.toJson())
+		}
+	}
+
+	fun getHistory(): List<Transfer> {
+		return transaction {
+			return@transaction logger.getTransfers()
+		}
+	}
+}
+
+class ExternalBankAccount(
+	id: EntityID<Int>
+) : BankAccount(id) {
+
+	companion object : IntEntityClass<ExternalBankAccount>(BankAccounts)
+
+	override fun deposit(amount: Double): Boolean {
+		return false
+	}
+
+	override fun withdraw(amount: Double): Boolean {
+		return false
+	}
+
+	override fun transferTo(amount: Double, recipient: BankAccount): Boolean {
+		return false
+	}
+
+	override fun receiveFrom(amount: Double, sender: BankAccount): Boolean {
+		return true
+	}
+	override fun toString(): String {
+		return "External Account $acctNum"
+	}
+
+	override fun toJson() : JsonObject {
+		return JsonObject().apply {
+			addProperty("acctNum", acctNum)
+			addProperty("type", "external")
 		}
 	}
 }

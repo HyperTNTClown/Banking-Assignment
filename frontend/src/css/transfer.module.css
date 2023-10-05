@@ -45,3 +45,14 @@
 	background-color: #ffffff0a;
 	color: #646cff;
 }
+
+.controls {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 25vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}

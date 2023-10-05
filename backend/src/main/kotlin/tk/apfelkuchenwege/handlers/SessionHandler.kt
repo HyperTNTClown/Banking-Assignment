@@ -1,18 +1,14 @@
 package tk.apfelkuchenwege.handlers
 
 import com.google.gson.JsonObject
-import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.sessions.*
-import io.ktor.util.*
-import io.ktor.util.date.*
 import tk.apfelkuchenwege.TimedToken
-import tk.apfelkuchenwege.base64
 import tk.apfelkuchenwege.data.banking.Account
 import tk.apfelkuchenwege.data.banking.AccountManager
-import tk.apfelkuchenwege.data.banking.BankAccount
 import tk.apfelkuchenwege.respondJson
-import tk.apfelkuchenwege.sha256
+import kotlin.collections.HashMap
+import kotlin.collections.get
+import kotlin.collections.set
 
 class SessionHandler(val accountManager: AccountManager) {
 
@@ -51,7 +47,7 @@ class SessionHandler(val accountManager: AccountManager) {
 	suspend fun renewSession(call: ApplicationCall) {
 		val session = currentSessionTokens[call.parameters["token"]]
 		if (session == null || !validateSession(session.token)) {
-			call.respondJson(errorMessage, HttpStatusCode.InternalServerError)
+			call.respondJson(errorMessage)
 			return
 		}
 		var newSession = currentSessionTokens[session.token]!!.renew()
@@ -73,9 +69,10 @@ class SessionHandler(val accountManager: AccountManager) {
 			call.respondJson(response)
 			return
 		}
-		var response = JsonObject()
-		response.addProperty("status", "success")
-		response.addProperty("valid", true)
+		var response = JsonObject().apply {
+			addProperty("status", "success")
+			addProperty("valid", true)
+		}
 		call.respondJson(response)
 	}
 }

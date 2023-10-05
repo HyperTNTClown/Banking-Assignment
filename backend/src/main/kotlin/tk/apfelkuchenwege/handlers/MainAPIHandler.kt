@@ -38,7 +38,7 @@ class MainAPIHandler(
 			var response = JsonObject()
 			response.addProperty("status", "error")
 			response.addProperty("message", "Invalid email or password: null")
-			call.respondJson(response, HttpStatusCode.BadRequest)
+			call.respondJson(response)
 			return
 		}
 
@@ -46,7 +46,11 @@ class MainAPIHandler(
 			var response = JsonObject()
 			response.addProperty("status", "error")
 			response.addProperty("message", "Account not verified")
-			call.respondJson(response, HttpStatusCode.BadRequest)
+			call.respondJson(response)
+			println(email.pendingAccounts.keys)
+			if (!email.pendingAccounts.containsKey(account.email)) {
+				email.sendVerificationMail(account)
+			}
 			return
 		}
 
@@ -54,7 +58,7 @@ class MainAPIHandler(
 			var response = JsonObject()
 			response.addProperty("status", "error")
 			response.addProperty("message", "Invalid email or password")
-			call.respondJson(response, HttpStatusCode.BadRequest)
+			call.respondJson(response)
 			return
 		}
 
@@ -92,7 +96,7 @@ class MainAPIHandler(
 			call.respondJson(response, HttpStatusCode.BadRequest)
 			return
 		}
-		email.pendingAccounts[account!!.email] = account!!
+
 		email.sendVerificationMail(account!!)
 
 		var response = JsonObject()
@@ -138,6 +142,12 @@ fun Application.configureRouting(api: MainAPIHandler) {
 				}
 				post("transaction") {
 					api.bankingAPIHandler.transaction(call)
+				}
+				post("history") {
+					api.bankingAPIHandler.history(call)
+				}
+				post("change-name") {
+					api.bankingAPIHandler.changeName(call)
 				}
 			}
 		}
